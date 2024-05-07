@@ -1,0 +1,32 @@
+input: .
+output: .retype
+url: https://docs.mattsimpson.ca
+branding:
+  title: "Matt ://"
+  label: Documentation
+links:
+- text: Back to Matt Simpson :// Blog
+  link: https://mattsimpson.ca
+  icon: reply
+  target: blank
+- text: GitHub Project
+  link: https://github.com/mattsimpson/docs.mattsimpson.ca
+  icon: mark-github
+  target: blank
+meta:
+  title: " | Matt Simpson :// Documentation"
+edit:
+  repo: "https://github.com/mattsimpson/docs.mattsimpson.ca"
+breadcrumb:
+  enabled: true
+  home: ":icon-home:"
+footer:
+  copyright: "Copyright &copy; {{ year }} [Matt Simpson](https://mattsimpson.ca). All rights reserved."
+  links:
+    - text: Licensed under CC BY-NC-SA 4.0
+      link: https://creativecommons.org/licenses/by-nc-sa/4.0/
+      icon: law
+      target: blank
+integrations:
+  googleTagManager:
+    id: "G-FHJNM7400Y"
