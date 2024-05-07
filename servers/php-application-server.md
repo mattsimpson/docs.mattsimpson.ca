@@ -101,7 +101,7 @@ This documentation assumes a few things, including:
                     wget
     ```
 
-9. If your PHP application will need to make connections to external servers (e.g., APIs, database servers), you will set the `httpd_can_network_connect` and `httpd_can_network_connect_db` options so that SELinux will allow Apache to make network and database connections:
+9. If your PHP application will need to make connections to external servers (e.g., APIs, database servers), you will need to set the `httpd_can_network_connect` and `httpd_can_network_connect_db` options so that SELinux will allow Apache to make network and database connections:
     ```bash
     setsebool -P httpd_can_network_connect 1
     setsebool -P httpd_can_network_connect_db 1
@@ -159,7 +159,7 @@ This documentation assumes a few things, including:
     ```
 
     !!!warning
-    If your PHP application writes data to areas other than the previously defined `storage` directory, you will need set and apply the `httpd_sys_rw_content_t` context to that location/file as well. For example, if you install Wordpress into the `/var/www/vhosts/app.example.org/current/public` directory, you would need to run:
+    If your PHP application writes data to areas other than the previously defined `storage` directory, you will need to set and apply the `httpd_sys_rw_content_t` context to that location/file as well. For example, if you install Wordpress into the `/var/www/vhosts/app.example.org/current/public` directory, you would need to run:
     ```bash
     semanage fcontext -a -t httpd_sys_rw_content_t "/var/www/vhosts/app.example.org/current/public(/.*)?"
     restorecon -R -v /var/www/vhosts/app.example.org
@@ -240,7 +240,7 @@ Setting up a staging VirtualHost is entirely optional. In most cases it is not a
     ```
 
     !!!
-    You will be asked a number of questions, answer accordingly, but **do not answer** enter anything for "Email Address", "A challenge password", or "An optional company name."
+    You will be asked a number of questions, answer accordingly, but **do not answer** anything for "Email Address", "A challenge password", or "An optional company name."
     !!!
 
     ```

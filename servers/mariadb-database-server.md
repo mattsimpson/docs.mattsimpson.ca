@@ -230,6 +230,10 @@ This documentation assumes a few things, including:
 
 +++ Ubuntu 24.04
 
+!!!warning Coming soon
+The Ubuntu documentation is in development.
+!!!
+
 +++
 
 ### Replica Database Server
