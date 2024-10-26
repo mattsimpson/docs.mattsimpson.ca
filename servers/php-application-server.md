@@ -975,7 +975,7 @@ Setting up a staging VirtualHost is entirely optional. In most cases it is not a
 9. Add the `production` and `staging` user to the `www-data` group.
    ```bash
    usermod -aG production www-data
-   usermod -aG production www-data
+   usermod -aG staging www-data
    ```
 
 10. Test that your Apache configuration is okay, then restart Apache and PHP-FPM:
