@@ -782,9 +782,10 @@ Setting up a staging VirtualHost is entirely optional. In most cases it is not a
 
 ### Configure Apache and PHP
 
-1. Enable several useful Apache modules:
+1. Enable several associated Apache modules and the Apache PHP configuration:
     ```bash
-    a2enmod ssl rewrite headers proxy proxy_http proxy_balancer expires
+    a2enmod ssl rewrite headers proxy proxy_http proxy_balancer expires proxy_fcgi setenvif
+    a2enconf php8.3-fpm
     ```
 
 2. Create a new file called `/etc/php/8.3/mods-available/app.ini` and add the following, making sure to adjust to your own [supported timezone](https://www.php.net/manual/en/timezones.php):
@@ -816,7 +817,8 @@ Setting up a staging VirtualHost is entirely optional. In most cases it is not a
     group = production
 
     listen = /run/php/app.example.org.sock
-
+    listen.owner = production
+    listen.group = production
     listen.allowed_clients = 127.0.0.1
 
     pm = dynamic
@@ -836,7 +838,8 @@ Setting up a staging VirtualHost is entirely optional. In most cases it is not a
     group = staging
 
     listen = /run/php/staging.app.example.org.sock
-
+    listen.owner = staging
+    listen.group = staging
     listen.allowed_clients = 127.0.0.1
 
     pm = dynamic
@@ -969,7 +972,13 @@ Setting up a staging VirtualHost is entirely optional. In most cases it is not a
     a2ensite 000-staging.app.example.org
     ```
 
-9. Test that your Apache configuration is okay, then restart Apache and PHP-FPM:
+9. Add the `production` and `staging` user to the `www-data` group.
+   ```bash
+   usermod -aG production www-data
+   usermod -aG production www-data
+   ```
+
+10. Test that your Apache configuration is okay, then restart Apache and PHP-FPM:
     ```bash
     apachectl configtest
     systemctl restart apache2
