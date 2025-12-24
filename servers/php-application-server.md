@@ -2,9 +2,11 @@
 order: 10
 icon: rocket
 ---
-# PHP Application Server
+# PHP 8.5 Application Server
 
-This documentation can be used as a reference to create a basic web application server running Apache and PHP. This includes several optional steps if you would like to include an additional Apache VirtualHost for a staging environment or would like Supervisor to run Laravel `artisan` for Queues or WebSockets.
+*Last Update & Tested: 2025-12-24*
+
+This documentation can be used as a reference to create a basic Linux web application server running Apache and PHP 8.5. This includes several optional steps if you would like to include an additional Apache VirtualHost for a staging environment or would like Supervisor to run Laravel `artisan` for Queues or WebSockets.
 
 !!!warning
 The hostname referenced throughout this documentation will be `app.example.org` and `staging.app.example.org`, which must be replaced by your actual hostname.
@@ -34,16 +36,16 @@ This documentation assumes a few things, including:
     nmcli general hostname app.example.org
     ```
 
-3.  Enable the CodeReady Builder (CRB) repository frequently used by EPEL:
-    ```bash
-    dnf config-manager --set-enabled crb
-    ```
-
-4.  Install the Extra Packages for Enterprise Linux (EPEL) and Remi PHP repositories:
+3.  Install the Extra Packages for Enterprise Linux (EPEL) and Remi PHP repositories:
     ```bash
     dnf -y install \
     https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm \
     https://rpms.remirepo.net/enterprise/remi-release-9.rpm
+    ```
+ 
+4. Enable the CodeReady Builder (CRB) repository frequently used by EPEL:
+    ```bash
+    dnf config-manager --set-enabled crb
     ```
 
 5.  Install then run `screen` (a good practice before updating/installing packages over a remote connection):
@@ -61,10 +63,10 @@ This documentation assumes a few things, including:
     reboot
     ```
 
-7.  Enable the Remi PHP repository and activate the PHP 8.3 module:
+7.  Enable the Remi PHP repository and activate the PHP 8.5 module:
     ```bash
     dnf config-manager --set-enabled remi
-    dnf module -y enable php:remi-8.3
+    dnf module -y enable php:remi-8.5
     ```
 
 8.  Install some awesome packages including Apache, OpenSSL, PHP, Git, MariaDB Client, Supervisor, SELinux Tools, and several other useful programs:
@@ -86,7 +88,6 @@ This documentation assumes a few things, including:
                     php-ldap \
                     php-mbstring \
                     php-mysqlnd \
-                    php-opcache \
                     php-pdo \
                     php-pecl-redis \
                     php-pecl-zip \
@@ -101,10 +102,15 @@ This documentation assumes a few things, including:
                     wget
     ```
 
-9. If your PHP application will need to make connections to external servers (e.g., APIs, database servers), you will need to set the `httpd_can_network_connect` and `httpd_can_network_connect_db` options so that SELinux will allow Apache to make network and database connections:
+9. If you have SELinux enabled and your PHP application will need to make connections to external servers (e.g., APIs, database servers), you will need to set the `httpd_can_network_connect` and `httpd_can_network_connect_db` options so that SELinux will allow Apache to make network and database connections:
     ```bash
     setsebool -P httpd_can_network_connect 1
     setsebool -P httpd_can_network_connect_db 1
+    ```
+
+   If you get an error there, you may need to reinstall the policy packages:
+    ```bash
+    dnf install -y --refresh selinux-policy-targeted
     ```
 
 10. Start PHP-FPM, Apache, and Supervisor and set them to start when the system boots:
@@ -114,10 +120,16 @@ This documentation assumes a few things, including:
     systemctl enable --now supervisord
     ```
 
-11. Allow HTTP and HTTPS traffic and reload the firewall:
+11. If you have firewalld running, allow HTTP and HTTPS traffic and reload the firewall:
     ```bash
     firewall-cmd --add-service=http --add-service=https --permanent
     firewall-cmd --reload
+    ```
+    
+    If you don't have it running, you may wish to install and enable it:
+    ```bash
+    dnf install -y firewalld
+    systemctl enable --now firewalld
     ```
 
 ### Create a production environment
@@ -580,46 +592,54 @@ This documentation assumes a few things, including:
 
 4.  Update the operating system:
     ```bash
-    apt-get update
-    apt-get upgrade
+    apt update
+    apt upgrade
     ```
 
     If a kernel update happened, you might as well reboot now:
     ```bash
     reboot
     ```
-
-5.  Install some awesome packages including Apache, OpenSSL, PHP, Git, MariaDB Client, Supervisor, and several other useful programs:
+    
+5.  Install the package for the `add-apt-repository` tool and then add the `ondrej/php` Personal Package Archives (PPA).
     ```bash
-    apt-get install -y apache2 \
+    sudo apt install software-properties-common
+    LC_ALL=C.UTF-8 sudo add-apt-repository ppa:ondrej/php
+    ```
+    !!!question No PPA Please
+    Don't want to use a PPA? No problem. At this point you will just be limited to PHP 8.3. Just replace anywhere that says `php8.5` with `php8.3`.
+    !!!
+
+6.  Install some awesome packages including Apache, OpenSSL, PHP, Git, MariaDB Client, Supervisor, and several other useful programs:
+    ```bash
+    apt install -y apache2 \
                             curl \
                             git \
                             mariadb-client \
                             openssl \
-                            php8.3-bcmath \
-                            php8.3-cli \
-                            php8.3-curl \
-                            php8.3-fpm \
-                            php8.3-gd \
-                            php8.3-imap \
-                            php8.3-intl \
-                            php8.3-ldap \
-                            php8.3-mbstring \
-                            php8.3-mysql \
-                            php8.3-opcache \
-                            php8.3-redis \
-                            php8.3-tidy \
-                            php8.3-xml \
-                            php8.3-xmlrpc \
-                            php8.3-zip \
+                            php8.5-bcmath \
+                            php8.5-cli \
+                            php8.5-curl \
+                            php8.5-fpm \
+                            php8.5-gd \
+                            php8.5-imap \
+                            php8.5-intl \
+                            php8.5-ldap \
+                            php8.5-mbstring \
+                            php8.5-mysql \
+                            php8.5-redis \
+                            php8.5-tidy \
+                            php8.5-xml \
+                            php8.5-xmlrpc \
+                            php8.5-zip \
                             supervisor \
                             unzip \
                             wget
     ```
 
-6. Start PHP-FPM, Apache, and Supervisor and set them to start when the system boots:
+7.  Start PHP-FPM, Apache, and Supervisor and set them to start when the system boots:
     ```bash
-    systemctl enable --now php8.3-fpm
+    systemctl enable --now php8.5-fpm
     systemctl enable --now apache2
     systemctl enable --now supervisor
     ```
@@ -785,10 +805,10 @@ Setting up a staging VirtualHost is entirely optional. In most cases it is not a
 1. Enable several associated Apache modules and the Apache PHP configuration:
     ```bash
     a2enmod ssl rewrite headers proxy proxy_http proxy_balancer expires proxy_fcgi setenvif
-    a2enconf php8.3-fpm
+    a2enconf php8.5-fpm
     ```
 
-2. Create a new file called `/etc/php/8.3/mods-available/app.ini` and add the following, making sure to adjust to your own [supported timezone](https://www.php.net/manual/en/timezones.php):
+2. Create a new file called `/etc/php/8.5/mods-available/app.ini` and add the following, making sure to adjust to your own [supported timezone](https://www.php.net/manual/en/timezones.php):
     ```
     date.timezone = America/Toronto
     display_errors = Off
@@ -807,18 +827,18 @@ Setting up a staging VirtualHost is entirely optional. In most cases it is not a
     phpenmod app
     ```
 
-4. Create a PHP-FPM Pool for the `production` user by creating a new file called `/etc/php/8.3/fpm/pool.d/production.conf` and add the following:
+4. Create a PHP-FPM Pool for the `production` user by creating a new file called `/etc/php/8.5/fpm/pool.d/production.conf` and add the following:
     ```
     ; Start a new pool named 'production'.
     [production]
 
     ; Unix user/group of processes
     user = production
-    group = production
+    group = www-data
 
     listen = /run/php/app.example.org.sock
     listen.owner = production
-    listen.group = production
+    listen.group = www-data
     listen.allowed_clients = 127.0.0.1
 
     pm = dynamic
@@ -828,7 +848,7 @@ Setting up a staging VirtualHost is entirely optional. In most cases it is not a
     pm.max_spare_servers = 35
     ```
 
-5. Create a PHP-FPM Pool for the `staging` user by creating a new file called `/etc/php/8.3/fpm/pool.d/staging.conf` and add the following:
+5. Create a PHP-FPM Pool for the `staging` user by creating a new file called `/etc/php/8.5/fpm/pool.d/staging.conf` and add the following:
     ```
     ; Start a new pool named 'staging'.
     [staging]
@@ -839,7 +859,7 @@ Setting up a staging VirtualHost is entirely optional. In most cases it is not a
 
     listen = /run/php/staging.app.example.org.sock
     listen.owner = staging
-    listen.group = staging
+    listen.group = www-data
     listen.allowed_clients = 127.0.0.1
 
     pm = dynamic
@@ -982,7 +1002,7 @@ Setting up a staging VirtualHost is entirely optional. In most cases it is not a
     ```bash
     apachectl configtest
     systemctl restart apache2
-    systemctl restart php8.3-fpm
+    systemctl restart php8.5-fpm
     ```
 
 ### Configure Supervisor
@@ -1051,7 +1071,7 @@ Supervisor has many uses, but in this example we are using it to run Laravel Que
 
 3. Restart Supervisor:
     ```
-    systemctl restart supervisord
+    systemctl restart supervisor
     ```
 
 +++

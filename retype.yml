@@ -4,6 +4,8 @@ url: https://docs.mattsimpson.ca
 branding:
   title: "Matt ://"
   label: Documentation
+hub:
+  link: https://mattsimpson.ca
 links:
 - text: Back to Matt Simpson :// Blog
   link: https://mattsimpson.ca
