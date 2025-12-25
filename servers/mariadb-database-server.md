@@ -36,15 +36,15 @@ This documentation assumes a few things, including:
     nmcli general hostname db01.example.org
     ```
 
-3.  Enable the CodeReady Builder (CRB) repository frequently used by EPEL:
-    ```bash
-    dnf config-manager --set-enabled crb
-    ```
-
-4.  Install the Extra Packages for Enterprise Linux (EPEL) repository:
+3.  Install the Extra Packages for Enterprise Linux (EPEL) repository:
     ```bash
     dnf -y install \
     https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
+    ```
+
+4.  Enable the CodeReady Builder (CRB) repository frequently used by EPEL:
+    ```bash
+    dnf config-manager --set-enabled crb
     ```
 
 5.  Install `vim` and `screen`, then run `screen` (a good practice before updating/installing packages over a remote connection):
@@ -255,8 +255,8 @@ This documentation assumes a few things, including:
 
 4.  Update the operating system:
     ```bash
-    apt-get update
-    apt-get upgrade
+    apt update
+    apt upgrade
     ```
 
     If a kernel update happened, you might as well reboot now:
@@ -266,7 +266,7 @@ This documentation assumes a few things, including:
 
 5.  Install the MariaDB Client and Server packages:
     ```bash
-    apt-get install install chrony \
+    apt install -y chrony \
                     mariadb-client \
                     mariadb-server
     ```
